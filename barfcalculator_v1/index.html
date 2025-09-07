@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BARF Calculator</title>
+    <meta name="description" content="Calculadora para dieta BARF para gatos">
+    <meta name="theme-color" content="#0f766e">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Iconos para iOS -->
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    
+    <!-- Hojas de estilo -->
+    <style>
+        :root {
+            --primary-color: #0f766e;
+            --secondary-color: #f0fdfa;
+            --text-color: #333;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #0d645d;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐱 BARF Calculator</h1>
+        
+        <form id="barf-form">
+            <div class="input-group">
+                <label for="cat-weight">Peso del gato (kg):</label>
+                <input type="number" id="cat-weight" step="0.1" min="0.1" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="diet-type">Tipo de dieta:</label>
+                <select id="diet-type" required>
+                    <option value="maintenance">Mantenimiento</option>
+                    <option value="weight-loss">Pérdida de peso</option>
+                    <option value="weight-gain">Aumento de peso</option>
+                </select>
+            </div>
+            
+            <button type="submit">Calcular raciones</button>
+        </form>
+        
+        <div id="results" class="result">
+            <h2>Resultados:</h2>
+            <div id="results-content"></div>
+        </div>
+    </div>
+
+    <!-- Script principal -->
+    <script>
+        // Registro del Service Worker para la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrado con éxito:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('Error registrando Service Worker:', error);
+                    });
+            });
+        }
+
+        // Datos de ejemplo para la calculadora BARF
+        const BARF_RATIOS = {
+            maintenance: {
+                meat: 0.8,
+                bones: 0.1,
+                organs: 0.05,
+                liver: 0.05
+            },
+            'weight-loss': {
+                meat: 0.7,
+                bones: 0.15,
+                organs: 0.075,
+                liver: 0.075
+            },
+            'weight-gain': {
+                meat: 0.85,
+                bones: 0.08,
+                organs: 0.035,
+                liver: 0.035
+            }
+        };
+
+        // Manejo del formulario
+        document.getElementById('barf-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const weight = parseFloat(document.getElementById('cat-weight').value);
+            const dietType = document.getElementById('diet-type').value;
+            
+            if (weight && weight > 0) {
+                calculateRations(weight, dietType);
+            } else {
+                alert('Por favor, introduce un peso válido');
+            }
+        });
+
+        // Función de cálculo
+        function calculateRations(weight, dietType) {
+            const dailyRation = weight * 0.02; // 2% del peso corporal
+            const ratios = BARF_RATIOS[dietType];
+            
+            const results = {
+                total: dailyRation.toFixed(2),
+                meat: (dailyRation * ratios.meat).toFixed(2),
+                bones: (dailyRation * ratios.bones).toFixed(2),
+                organs: (dailyRation * ratios.organs).toFixed(2),
+                liver: (dailyRation * ratios.liver).toFixed(2)
+            };
+            
+            displayResults(results, dietType);
+        }
+
+        // Mostrar resultados
+        function displayResults(results, dietType) {
+            const resultsDiv = document.getElementById('results');
+            const contentDiv = document.getElementById('results-content');
+            
+            contentDiv.innerHTML = `
+                <p><strong>Ración diaria total:</strong> ${results.total} kg</p>
+                <p><strong>Carne muscular:</strong> ${results.meat} kg</p>
+                <p><strong>Huesos carnosos:</strong> ${results.bones} kg</p>
+                <p><strong>Órganos (excepto hígado):</strong> ${results.organs} kg</p>
+                <p><strong>Hígado:</strong> ${results.liver} kg</p>
+                <p><em>Tipo de dieta: ${dietType}</em></p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

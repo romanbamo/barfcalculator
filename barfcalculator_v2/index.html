@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BARF Calculator</title>
+    <meta name="description" content="Calculadora completa para dieta BARF para gatos">
+    <meta name="theme-color" content="#0f766e">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <style>
+        :root {
+            --primary-color: #0f766e;
+            --secondary-color: #f0fdfa;
+            --text-color: #333;
+            --bg-color: #f5f5f5;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        nav {
+            background: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .nav-btn {
+            background: none;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .page {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 0 0 10px 10px;
+            min-height: 400px;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #0d645d;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .result.active {
+            display: block;
+        }
+        
+        .home-content {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .home-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .home-content p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .feature-list {
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .feature-list li {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: var(--secondary-color);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐱 BARF Calculator</h1>
+        </header>
+        
+        <nav>
+            <button class="nav-btn active" data-page="home">Inicio</button>
+            <button class="nav-btn" data-page="calculator">Calculadora</button>
+            <button class="nav-btn" data-page="diet-by-kg">Dieta por Kg</button>
+        </nav>
+        
+        <!-- Página de Inicio -->
+        <div id="home" class="page active">
+            <div class="home-content">
+                <h2>Bienvenido a BARF Calculator</h2>
+                <p>La herramienta definitiva para calcular dietas BARF para tus gatos</p>
+                
+                <ul class="feature-list">
+                    <li>✅ Calculadora de raciones diarias</li>
+                    <li>✅ Cálculo por peso del gato</li>
+                    <li>✅ Diferentes tipos de dieta</li>
+                    <li>✅ Resultados detallados</li>
+                    <li>✅ Funciona offline</li>
+                </ul>
+                
+                <p>Selecciona una opción del menú superior para comenzar</p>
+            </div>
+        </div>
+        
+        <!-- Página de Calculadora -->
+        <div id="calculator" class="page">
+            <h2>Calculadora de Raciones Diarias</h2>
+            <form id="barf-form">
+                <div class="input-group">
+                    <label for="cat-weight">Peso del gato (kg):</label>
+                    <input type="number" id="cat-weight" step="0.1" min="0.1" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="diet-type">Tipo de dieta:</label>
+                    <select id="diet-type" required>
+                        <option value="maintenance">Mantenimiento</option>
+                        <option value="weight-loss">Pérdida de peso</option>
+                        <option value="weight-gain">Aumento de peso</option>
+                    </select>
+                </div>
+                
+                <button type="submit">Calcular raciones</button>
+            </form>
+            
+            <div id="results" class="result">
+                <h3>Resultados:</h3>
+                <div id="results-content"></div>
+            </div>
+        </div>
+        
+        <!-- Página de Dieta por Kg -->
+        <div id="diet-by-kg" class="page">
+            <h2>Cálculo de Dieta por Kilogramo</h2>
+            <form id="diet-by-kg-form">
+                <div class="input-group">
+                    <label for="total-weight">Peso total a preparar (kg):</label>
+                    <input type="number" id="total-weight" step="0.1" min="0.1" required>
+                </div>
+                <div class="input-group">
+                    <label for="total-cats">Cantidad de gatos:</label>
+                    <input type="number" id="total-cats" step="1" min="1" value="1">
+                    <label for="total-cats">Porción diaria (g):</label>
+                    <input type="number" id="daily-portion" step="1" min="0" value="0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="diet-type-kg">Tipo de dieta:</label>
+                    <select id="diet-type-kg" required>
+                        <option value="maintenance">Mantenimiento</option>
+                        <option value="weight-loss">Pérdida de peso</option>
+                        <option value="weight-gain">Aumento de peso</option>
+                    </select>
+                </div>
+                
+                <button type="submit">Calcular ingredientes</button>
+            </form>
+            
+            <div id="results-kg" class="result">
+                <h3>Ingredientes necesarios:</h3>
+                <div id="results-content-kg"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Registro del Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker registrado'))
+                .catch(error => console.log('Error:', error));
+        }
+
+        // Navegación entre páginas
+        document.querySelectorAll('.nav-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetPage = button.dataset.page;
+                
+                // Actualizar botones de navegación
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+                
+                // Mostrar página correspondiente
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(targetPage).classList.add('active');
+            });
+        });
+
+        // Datos de las dietas
+        const BARF_RATIOS = {
+            maintenance: { 
+                meat: 0.6, 
+                bones: 0.1, 
+                organs: 0.1,
+                liver: 0.1,
+                heart: 0.1,
+                vegetables: 0.1
+            },
+            'weight-loss': { 
+                meat: 0.7, 
+                bones: 0.15, 
+                organs: 0.05,
+                liver: 0.05,
+                heart: 0.05,
+                vegetables: 0.5
+            },
+            'weight-gain': { 
+                meat: 0.85, 
+                bones: 0.08, 
+                organs: 0.023,
+                liver: 0.023,
+                heart: 0.024,
+                vegetables: 0.025
+            }
+        };
+
+        // Calculadora de raciones diarias
+        document.getElementById('barf-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const weight = parseFloat(document.getElementById('cat-weight').value);
+            const dietType = document.getElementById('diet-type').value;
+            
+            if (weight && weight > 0) {
+                const dailyRation = weight * 0.02;
+                const ratios = BARF_RATIOS[dietType];
+                const sumaRatios = Object.values(ratios).reduce((total, ratio) => total + ratio, 0);
+                
+                const results = {
+                    total: dailyRation.toFixed(3),
+                    meat: (dailyRation * (ratios.meat / sumaRatios)).toFixed(3),
+                    bones: (dailyRation * (ratios.bones / sumaRatios)).toFixed(3),
+                    organs: (dailyRation * (ratios.organs / sumaRatios)).toFixed(3),
+                    heart: (dailyRation * (ratios.heart / sumaRatios)).toFixed(3),
+                    liver: (dailyRation * (ratios.liver / sumaRatios)).toFixed(3),
+                    vegetables: (dailyRation * (ratios.vegetables / sumaRatios)).toFixed(3)
+                };
+                
+                document.getElementById('results-content').innerHTML = `
+                    <p><strong>Ración diaria total:</strong> ${results.total} kg</p>
+                    <p><strong>Carne muscular:</strong> ${results.meat} kg</p>
+                    <p><strong>Huesos carnosos:</strong> ${results.bones} kg</p>
+                    <p><strong>Órganos (excepto hígado):</strong> ${results.organs} kg</p>
+                    <p><strong>Hígado:</strong> ${results.liver} kg</p>
+                    <p><strong>Corazón:</strong> ${results.heart} kg</p>
+                    <p><strong>Vegetales:</strong> ${results.vegetables} kg</p>
+                    <p><em>Tipo de dieta: ${dietType}</em></p>
+                `;
+                
+                document.getElementById('results').classList.add('active');
+            }
+        });
+
+        // Calculadora de dieta por kg
+        document.getElementById('diet-by-kg-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const totalWeight = parseFloat(document.getElementById('total-weight').value);
+            const totalCats = parseFloat(document.getElementById('total-cats').value);
+            const dailyPortion = parseFloat(document.getElementById('daily-portion').value);
+            const dietType = document.getElementById('diet-type-kg').value;
+            
+            if (totalWeight && totalWeight > 0) {
+                const ratios = BARF_RATIOS[dietType];
+                
+                const results = {
+                    total: (totalWeight).toFixed(3),
+                    meat: (totalWeight * ratios.meat).toFixed(3),
+                    bones: (totalWeight * ratios.bones).toFixed(3),
+                    organs: (totalWeight * ratios.organs).toFixed(3),
+                    heart: (totalWeight * ratios.heart).toFixed(3),
+                    liver: (totalWeight * ratios.liver).toFixed(3),
+                    vegetables: (totalWeight * ratios.vegetables).toFixed(3)
+                };
+                
+                const diasHTML = dailyPortion !== 0 
+                    ? `<p><em>Esta cantidad es para aproximadamente ${Math.round(totalWeight / (totalCats * (dailyPortion / 1000)))} días</em></p>`
+                    : '';
+
+                document.getElementById('results-content-kg').innerHTML = `
+                    <p><strong>Carne muscular:</strong> ${results.meat} kg</p>
+                    <p><strong>Huesos carnosos:</strong> ${results.bones} kg</p>
+                    <p><strong>Órganos (excepto hígado):</strong> ${results.organs} kg</p>
+                    <p><strong>Hígado:</strong> ${results.liver} kg</p>
+                    <p><strong>Corazón:</strong> ${results.heart} kg</p>
+                    <p><strong>Vegetales:</strong> ${results.vegetables} kg</p>
+                    <p><strong>Total preparado:</strong> ${(parseFloat(results.total) + parseFloat(results.vegetables)).toFixed(3)} kg</p>
+                    ${diasHTML}
+                `;
+                                
+                document.getElementById('results-kg').classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

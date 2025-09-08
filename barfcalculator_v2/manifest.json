@@ -3,7 +3,7 @@
   "short_name": "BARF Calc",
   "description": "Calculadora para dieta BARF",
   "start_url": "/barfcalculator/",
-  "scope": "/barfcalculator",
+  "scope": "/barfcalculator/",
   "display": "standalone",
   "background_color": "#0f766e",
   "theme_color": "#0f766e",

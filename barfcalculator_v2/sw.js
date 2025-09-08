@@ -1,10 +1,14 @@
 const CACHE = 'barf-cache-v1';
 const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json'
-  ,'./icons/web-app-manifest-192x192.png', './icons/web-app-manifest-512x512.png'
+  '/barfcalculator/',
+  '/barfcalculator/index.html',
+  '/barfcalculator/manifest.json',
+  '/barfcalculator/icons/web-app-manifest-192x192.png',
+  '/barfcalculator/icons/web-app-manifest-512x512.png'
 ];
+
+navigator.serviceWorker.register('/barfcalculator/sw.js');
+
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
 });

@@ -34,7 +34,7 @@ The application uses the following percentages based on the selected diet type:
 | Organs (others)	| 10%	| 5% | 2.3% |
 | Liver	| 10% | 5% | 2.3% |
 | Heart	| 10%	| 5% | 2.4% |
-| Vegetables* | 10% | 50%*	| 2.5% |
+| Vegetables* | 10% | 20%*	| 2.5% |
 
     Note: Vegetables are calculated as an additional percentage on top of the target weight. For example, preparing 10 kg of meat will result in 11 kg of total food after adding 1 kg of vegetables.
     Note: In the weight loss profile, the higher vegetable ratio acts as a low-calorie filler to aid satiety.

@@ -83,6 +83,13 @@ To use this application as a native app on your mobile device, follow these step
     Scroll down and select Add to Home Screen.
 
     Tap Add in the top right corner. The icon will now appear on your home screen like a standard application.
+### Preview Interface
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b4c30ecd-1fd9-42b0-87d8-143ab5155d89" width="30%" align="top" />
+  &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/79cadf00-703f-4e66-99fa-983040ea640f" width="30%" align="top" />
+</p>
+
 
 ## Legal Disclaimer
 
